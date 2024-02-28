@@ -1,0 +1,7 @@
+apiVersion: file.example.com/v1
+kind: File
+metadata:
+  name: file-sample
+spec:
+  directoryPath: "/path/to/your/directory"
+  maxFiles: 10

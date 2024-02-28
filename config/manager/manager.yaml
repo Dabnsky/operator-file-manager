@@ -6,8 +6,8 @@ metadata:
     app.kubernetes.io/name: namespace
     app.kubernetes.io/instance: system
     app.kubernetes.io/component: manager
-    app.kubernetes.io/created-by: operator-file-manager
-    app.kubernetes.io/part-of: operator-file-manager
+    app.kubernetes.io/created-by: maintain-files-operator
+    app.kubernetes.io/part-of: maintain-files-operator
     app.kubernetes.io/managed-by: kustomize
   name: system
 ---
@@ -21,8 +21,8 @@ metadata:
     app.kubernetes.io/name: deployment
     app.kubernetes.io/instance: controller-manager
     app.kubernetes.io/component: manager
-    app.kubernetes.io/created-by: operator-file-manager
-    app.kubernetes.io/part-of: operator-file-manager
+    app.kubernetes.io/created-by: maintain-files-operator
+    app.kubernetes.io/part-of: maintain-files-operator
     app.kubernetes.io/managed-by: kustomize
 spec:
   selector:
@@ -71,6 +71,9 @@ spec:
         args:
         - --leader-elect
         image: controller:latest
+        volumeMounts:
+          - name: host-directory
+            mountPath: /testeFiles
         name: manager
         securityContext:
           allowPrivilegeEscalation: false
@@ -98,5 +101,10 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
+      volumes:
+        - name: host-directory
+          hostPath:
+            path: /home/davidh/work/operator_sdk_tutorial/maintain-files-operator/TestFiles
+
       serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10

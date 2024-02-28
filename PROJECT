@@ -4,10 +4,20 @@
 # More info: https://book.kubebuilder.io/reference/project-config.html
 domain: example.com
 layout:
-- go.kubebuilder.io/v4
+- go.kubebuilder.io/v3
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: operator-file-manager
+projectName: maintain-files-operator
 repo: github.com/example/file-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: example.com
+  group: file
+  kind: File
+  path: github.com/example/file-operator/api/v1
+  version: v1
 version: "3"

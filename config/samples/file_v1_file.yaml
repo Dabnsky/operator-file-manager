@@ -1,0 +1,12 @@
+apiVersion: file.example.com/v1
+kind: File
+metadata:
+  labels:
+    app.kubernetes.io/name: file
+    app.kubernetes.io/instance: file-sample
+    app.kubernetes.io/part-of: maintain-files-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: maintain-files-operator
+  name: file-sample
+spec:
+  # TODO(user): Add fields here
