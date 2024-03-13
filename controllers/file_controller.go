@@ -29,6 +29,7 @@ import (
 
 	filev1 "github.com/example/file-operator/api/v1"
 	"github.com/go-logr/logr"
+	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // FileReconciler reconciles a File object
@@ -53,7 +54,7 @@ type FileReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.1/pkg/reconcile
 // Reconcile compares the actual state with the desired state and takes action to reconcile the difference
 func (r *FileReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	log := r.Log.WithValues("file", req.NamespacedName)
+	log := ctrllog.FromContext(ctx)
 
 	// Fetch the File instance
 	file := &filev1.File{}
@@ -129,7 +130,7 @@ func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
 	if numFiles > maxFiles {
 		numToDelete := numFiles - maxFiles
 		for i := 0; i < numToDelete; i++ {
-			file, err := os.Create("filename")
+			file, err := os.Create(directoryPath + "/filename")
 			if err != nil {
 				return err
 			}
@@ -140,7 +141,7 @@ func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
 	if numFiles < maxFiles {
 		numToCreate := maxFiles - numFiles
 		for i := 0; i < numToCreate; i++ {
-			file, err := os.Create("filename")
+			file, err := os.Create(directoryPath + "/filename")
 			if err != nil {
 				return err
 			}

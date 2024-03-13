@@ -70,10 +70,10 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: controller:latest
+        image: ghcr.io/dabnsky/operator-file-manager/maintain-files-mgr:latest
         volumeMounts:
           - name: host-directory
-            mountPath: /testeFiles
+            mountPath: /TestFiles
         name: manager
         securityContext:
           allowPrivilegeEscalation: false
@@ -104,7 +104,8 @@ spec:
       volumes:
         - name: host-directory
           hostPath:
-            path: /home/davidh/work/operator_sdk_tutorial/maintain-files-operator/TestFiles
-
+            path: /home/davidh/work/operator_sdk_tutorial/Operator-File-Manager/TestFiles
+      imagePullSecrets:
+        - name: ghcr-registry-secret
       serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10

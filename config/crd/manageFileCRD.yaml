@@ -3,5 +3,5 @@ kind: File
 metadata:
   name: file-sample
 spec:
-  directoryPath: "/home/davidh/work/operator_sdk_tutorial/maintain-files-operator/TestFiles"
+  directoryPath: "/home/davidh/work/operator_sdk_tutorial/Operator-File-Manager/TestFiles"
   maxFiles: 10
