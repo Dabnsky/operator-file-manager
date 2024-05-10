@@ -79,7 +79,7 @@ func (r *FileReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 	// Compare the actual number of files with the maximum allowed
 	if numFiles != maxFiles {
 		// Take action to manage the files (e.g., delete old files, raise an alert, etc.)
-		err := manageFiles(directoryPath, numFiles, maxFiles)
+		err := manageFiles(ctx, directoryPath, numFiles, maxFiles)
 		if err != nil {
 			log.Error(err, "unable to manage files")
 			return ctrl.Result{}, err
@@ -95,7 +95,7 @@ func (r *FileReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		log.Info("managed files successfully")
 	}
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{Requeue: true}, nil
 }
 
 // countFiles counts the number of files in the specified directory
@@ -133,8 +133,10 @@ func randomString(length int) string {
 }
 
 // manageFiles takes action to manage the files in the directory
-func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
+func manageFiles(ctx context.Context, directoryPath string, numFiles int, maxFiles int) error {
 	// Implement logic to manage files (e.g., delete old files, raise an alert, etc.)
+
+	log := ctrllog.FromContext(ctx)
 
 	if numFiles > maxFiles {
 		numToDelete := numFiles - maxFiles
@@ -142,7 +144,6 @@ func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
 		if err != nil {
 			return err
 		}
-
 		for i, file := range entries {
 			if i == numToDelete {
 				break
@@ -151,16 +152,19 @@ func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
 			if err != nil {
 				return err
 			}
+			log.Info("removed file: " + file.Name())
 		}
 	}
 
 	if numFiles < maxFiles {
 		numToCreate := maxFiles - numFiles
 		for i := 0; i < numToCreate; i++ {
-			file, err := os.Create(directoryPath + "/filename" + randomString(3))
+			filename := "/filename" + randomString(3)
+			file, err := os.Create(directoryPath + filename)
 			if err != nil {
 				return err
 			}
+			log.Info("added file: " + filename)
 			defer file.Close()
 		}
 	}
