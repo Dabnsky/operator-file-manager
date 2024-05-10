@@ -18,6 +18,8 @@ package controllers
 
 import (
 	"context"
+	"math/rand"
+	"time"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -123,25 +125,39 @@ func countFiles(directoryPath string) (int, error) {
 
 }
 
+func randomString(length int) string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]byte, length)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)[:length]
+}
+
 // manageFiles takes action to manage the files in the directory
 func manageFiles(directoryPath string, numFiles int, maxFiles int) error {
 	// Implement logic to manage files (e.g., delete old files, raise an alert, etc.)
 
 	if numFiles > maxFiles {
 		numToDelete := numFiles - maxFiles
-		for i := 0; i < numToDelete; i++ {
-			file, err := os.Create(directoryPath + "/filename")
+		entries, err := os.ReadDir(directoryPath)
+		if err != nil {
+			return err
+		}
+
+		for i, file := range entries {
+			if i == numToDelete {
+				break
+			}
+			err := os.Remove(directoryPath + "/" + file.Name())
 			if err != nil {
 				return err
 			}
-			defer file.Close()
 		}
 	}
 
 	if numFiles < maxFiles {
 		numToCreate := maxFiles - numFiles
 		for i := 0; i < numToCreate; i++ {
-			file, err := os.Create(directoryPath + "/filename")
+			file, err := os.Create(directoryPath + "/filename" + randomString(3))
 			if err != nil {
 				return err
 			}
